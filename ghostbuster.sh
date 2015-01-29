@@ -48,7 +48,7 @@ main()
 	fi
 }
 
-if [ -z "$1" ]; then
+if [ -z "${1:-}" ]; then
 	main
 else
 	detect "$1"
