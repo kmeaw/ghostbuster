@@ -15,10 +15,10 @@ detect()
 {
 	echo "Checking $1..."
 	MD5=$(md5sum - < $1 | cut -d' ' -f1)
-	if [ "$MD5" = "f3f632e2aa8ad177f56735fd3700d31f" -o "$MD5" = "bf02a9a38618abbd46cc10bdfec1fbca" -o "$MD5" = "93d06c4400f88574ce791694137c669d" ]; then
+	if [ "$MD5" = "f3f632e2aa8ad177f56735fd3700d31f" -o "$MD5" = "bf02a9a38618abbd46cc10bdfec1fbca" -o "$MD5" = "93d06c4400f88574ce791694137c669d" -o "$MD5" = "3e7d0679edfe419d1140bfd60080b951" ]; then
 		echo "Vulnerable, patching..."
 		runpatch $1
-	elif [ "$MD5" = "6e908dd7e69f8617b9158fbaca5b0f71" -o "$MD5" = "a4732590fdd4f9e1c224f79feff7bb2e" -o "$MD5" = "64eb929e69bde789d724ac89ec927b8f" ]; then
+	elif [ "$MD5" = "6e908dd7e69f8617b9158fbaca5b0f71" -o "$MD5" = "a4732590fdd4f9e1c224f79feff7bb2e" -o "$MD5" = "64eb929e69bde789d724ac89ec927b8f" -o "$MD5" = "84bd448a20811e83de94f56cdc0bf4a2" ]; then
 		echo "Already patched."
 	elif [ "$MD5" = "cdd431223b10776be89e4578c76b5946" ]; then
 		echo "Non-vulnerable version."
