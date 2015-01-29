@@ -4,7 +4,7 @@ runpatch()
 	FILE="$1"
 	POS=$(grep -obUaP "\xf8\xff\x4d\x85\xe4\x48\x8d\x50\x21\x0f\x84\x83\x03\x00\x00" "$FILE" | cut -d: -f1)
 	if test -z "$POS"; then
-		echo "Haystack is missing, aborting..." >&2
+		echo "Needle is missing, aborting..." >&2
 		return
 	fi
 	printf "\xf8\xff\x4d\x85\xe4\x48\x8d\x50\x29\x0f\x84\x83\x03\x00\x00" | dd of="$FILE" bs=1 seek="$POS" conv=notrunc
