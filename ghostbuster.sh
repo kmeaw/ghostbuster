@@ -15,10 +15,10 @@ detect()
 {
 	echo "Checking $1..."
 	MD5=$(md5sum - < $1 | cut -d' ' -f1)
-	if [ "$MD5" = "f3f632e2aa8ad177f56735fd3700d31f" -o "$MD5" = "bf02a9a38618abbd46cc10bdfec1fbca" ]; then
+	if [ "$MD5" = "f3f632e2aa8ad177f56735fd3700d31f" -o "$MD5" = "bf02a9a38618abbd46cc10bdfec1fbca" -o "$MD5" = "93d06c4400f88574ce791694137c669d" ]; then
 		echo "Vulnerable, patching..."
 		runpatch $1
-	elif [ "$MD5" = "6e908dd7e69f8617b9158fbaca5b0f71" -o "$MD5" = "a4732590fdd4f9e1c224f79feff7bb2e" ]; then
+	elif [ "$MD5" = "6e908dd7e69f8617b9158fbaca5b0f71" -o "$MD5" = "a4732590fdd4f9e1c224f79feff7bb2e" -o "$MD5" = "64eb929e69bde789d724ac89ec927b8f" ]; then
 		echo "Already patched."
 	elif [ "$MD5" = "cdd431223b10776be89e4578c76b5946" ]; then
 		echo "Non-vulnerable version."
@@ -27,21 +27,30 @@ detect()
 	fi
 }
 
-detect /lib/x86_64-linux-gnu/libc-2.15.so
-DELETED=$(grep 'libc-2.15.so (deleted)' /proc/1/maps -m1 || true)
-if test -n "$DELETED"; then
-	echo "You have a deleted (possibly, unpatched) version of libc."
-	BDEV=$(echo "$DELETED" | awk '{print $4}')
-	SONODE=$(echo "$DELETED" | awk '{print $5}')
-	SONAME=$(echo "$DELETED" | awk '{print $6}')
-	BFILE="/tmp/dev-$$-$BDEV"
-	BMAJ=${BDEV%:*}
-	BMIN=${BDEV#*:}
-	mknod $BFILE b $((0x$BMAJ)) $((0x$BMIN))
-	rm -f /vuln || true
-	echo -e "ln <$SONODE> /vuln\nclose -a\nq" | debugfs -w $BFILE
-	echo 2 > /proc/sys/vm/drop_caches
-	detect /vuln
-	rm -f /vuln
+main()
+{
+	detect /lib/x86_64-linux-gnu/libc-2.15.so
+	DELETED=$(grep 'libc-2.15.so (deleted)' /proc/1/maps -m1 || true)
+	if test -n "$DELETED"; then
+		echo "You have a deleted (possibly, unpatched) version of libc."
+		BDEV=$(echo "$DELETED" | awk '{print $4}')
+		SONODE=$(echo "$DELETED" | awk '{print $5}')
+		SONAME=$(echo "$DELETED" | awk '{print $6}')
+		BFILE="/tmp/dev-$$-$BDEV"
+		BMAJ=${BDEV%:*}
+		BMIN=${BDEV#*:}
+		mknod $BFILE b $((0x$BMAJ)) $((0x$BMIN))
+		rm -f /vuln || true
+		echo -e "ln <$SONODE> /vuln\nclose -a\nq" | debugfs -w $BFILE
+		echo 2 > /proc/sys/vm/drop_caches
+		detect /vuln
+		rm -f /vuln
+	fi
+}
+
+if [ -z "$1" ]; then
+	main
+else
+	detect "$1"
 fi
 
