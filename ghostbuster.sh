@@ -20,7 +20,7 @@ detect()
 		runpatch $1
 	elif [ "$MD5" = "6e908dd7e69f8617b9158fbaca5b0f71" -o "$MD5" = "a4732590fdd4f9e1c224f79feff7bb2e" -o "$MD5" = "64eb929e69bde789d724ac89ec927b8f" -o "$MD5" = "84bd448a20811e83de94f56cdc0bf4a2" -o "$MD5" = "f49adccf812efdb5aa2ad87a94030a29" ]; then
 		echo "Already patched."
-	elif [ "$MD5" = "cdd431223b10776be89e4578c76b5946" ]; then
+	elif [ "$MD5" = "cdd431223b10776be89e4578c76b5946" -o "$MD5" = "d9689dfb378c62054c87f3549d66c37d" ]; then
 		echo "Non-vulnerable version."
 	else
 		echo "Unknown version: $MD5."
